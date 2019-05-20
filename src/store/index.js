@@ -9,7 +9,7 @@ export default new Vuex.Store({
   
   },
   state: {
-    authUser: null,
+    authUser: JSON.parse(localStorage.getItem('auth')),
     authError: null
   },
   mutations: {
@@ -37,11 +37,22 @@ export default new Vuex.Store({
         commit('setAuthError', err)
       })
     },
-    onUserAuth ({commit}) {
+    onUserAuth ({commit, dispatch}) {
       firebase.auth().onAuthStateChanged(user => {
         if(user) {
           commit('setAuthUser', { uid: user.uid, email: user.email })
+        } else {
+          // sign out user
+          dispatch('unathenticate')
         }
+      })
+    },
+    unathenticate ({commit}) {
+      firebase.auth().signOut().then(() => {
+        commit('setAuthUser', null)
+        localStorage.removeItem('auth')
+      }).catch(error => {
+        console.log(error)
       })
     }
   },

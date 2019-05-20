@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <!-- Left side navigation drawer -->
-    <v-navigation-drawer v-model="drawer" fixed app>
+    <v-navigation-drawer v-if="userIsAuthenticated" v-model="drawer" fixed app>
       <!-- Material background -->
       <v-img :aspect-ratio="16/9" :src="require('@/assets/material.jpg')">
           <v-layout pa-2 column fill-height class="lightbox white--text">
@@ -36,7 +36,7 @@
     </v-navigation-drawer>
     <!-- Top toolbar -->
     <v-toolbar color="green" dark fixed app>
-        <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+        <v-toolbar-side-icon v-if="userIsAuthenticated" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
         <v-toolbar-title>VENDOFY</v-toolbar-title>
     </v-toolbar>
     <!-- Page content -->
@@ -60,9 +60,20 @@
         {title: "Products",   icon: "business_center",  path: "/products"},
         {title: "Customers",  icon: "group",            path: "/customers"},
         {title: "Sales",      icon: "equalizer",        path: "/sales"},
-        {divider: true }
+        {divider: true },
+        {title: "Settings",   icon: "settings",         path: "/settings"}
       ]
-    })
+    }),
+    computed: {
+      userIsAuthenticated() {
+        return this.$store.getters.getAuthUser !== null && this.$store.getters.getAuthUser !== undefined
+      }
+    },
+    watch: {
+      userIsAuthenticated(val) {
+        if (!val) this.$router.replace('/sign_in')
+      }
+    }
   }
 </script>
 

@@ -7,7 +7,7 @@
           <v-layout pa-2 column fill-height class="lightbox white--text">
           <v-spacer></v-spacer>
           <v-flex shrink>
-              <div class="subheading">johnkenneth411@gmail.com</div>
+              <div class="subheading">{{ getUser.email }}</div>
               <div class="body-1">Administrator</div>
           </v-flex>
           </v-layout>
@@ -67,6 +67,9 @@
     computed: {
       userIsAuthenticated() {
         return this.$store.getters.getAuthUser !== null && this.$store.getters.getAuthUser !== undefined
+      },
+      getUser() {
+        return this.$store.getters.getAuthUser
       }
     },
     watch: {

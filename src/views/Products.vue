@@ -26,7 +26,14 @@
                                 <p class="subheading font-weight-medium blue-grey--text mb-2 text-xs-right">Quantity: {{ product.qty }}</p>
                             </v-flex>
                         </v-layout>
-                        <v-btn color="green" block round class="white--text" @click="onUpdateProducts">
+                        <v-btn color="green" block round class="white--text" 
+                            @click="onUpdateProducts(
+                                product.id,
+                                product.descrp,
+                                product.size,
+                                product.price,
+                                product.qty
+                            )">
                             <v-icon>edit</v-icon>&nbsp;Update
                         </v-btn>
                     </v-card-text>
@@ -44,7 +51,7 @@
                         <v-btn icon dark @click="onClose">
                             <v-icon>close</v-icon>
                         </v-btn>
-                        <v-toolbar-title>Product No. ?</v-toolbar-title>
+                        <v-toolbar-title>Product No. {{ edit.id }}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
                             <v-btn type="submit" class="subheading" dark flat :loading="loading">SAVE</v-btn>
@@ -54,7 +61,7 @@
                     <!-- Small dialog header -->
                     <template v-else>
                         <v-card-title>
-                        <span class="title">Product No. ?</span>
+                        <span class="title">Product No. {{ edit.id }}</span>
                         </v-card-title>
                         <v-divider></v-divider>
                     </template>
@@ -64,14 +71,41 @@
                             <v-layout wrap>
                                 <v-flex xs12>
                                     <v-card-text>
-                                        <v-text-field label="Product name" 
-                                            v-model="edit.name" 
+                                        <v-text-field label="Description" 
+                                            type="text"
+                                            v-model="edit.descrp" 
                                             counter="30"
                                             maxlength="30"
-                                            :rules="[v => v.length <= 30 || 'Max 30 characters']"
-                                            :error-messages="nameErrors"
-                                            @input="$v.edit.name.$touch()"
-                                            @blur="$v.edit.name.$touch()"
+                                            :error-messages="descrpErrors"
+                                            @input="$v.edit.descrp.$touch()"
+                                            @blur="$v.edit.descrp.$touch()"
+                                            required>
+                                        </v-text-field>
+                                        <v-select label="Size"
+                                            v-model="edit.size"
+                                            :items="sizes"
+                                            :error-messages="sizeErrors"
+                                            required
+                                            @change="$v.edit.size.$touch()"
+                                            @blur="$v.edit.size.$touch()"
+                                        ></v-select>
+                                        <v-text-field label="Price" 
+                                            min="1"
+                                            type="number"
+                                            v-model = "edit.price" 
+                                            prefix="₱" 
+                                            :error-messages="priceErrors"
+                                            @input="$v.edit.price.$touch()"
+                                            @blur="$v.edit.price.$touch()"
+                                            required>
+                                        </v-text-field>
+                                        <v-text-field label="Quantity" 
+                                            min="0"
+                                            type="number"
+                                            v-model = "edit.qty" 
+                                            :error-messages="qtyErrors"
+                                            @input="$v.edit.qty.$touch()"
+                                            @blur="$v.edit.qty.$touch()"
                                             required>
                                         </v-text-field>
                                     </v-card-text>
@@ -97,13 +131,16 @@
 
 <script>
     import { validationMixin } from 'vuelidate'
-    import { required, numeric } from 'vuelidate/lib/validators'
+    import { required, numeric, minValue } from 'vuelidate/lib/validators'
 
     export default {
         mixins: [validationMixin],
         validations: {
             edit: {
-                name: { required }
+                descrp: { required },
+                price:  { required, numeric, minValue: minValue(1) },
+                qty:    { required, numeric },
+                size:   { required }
             }
         },
         data: () => ({
@@ -112,8 +149,21 @@
             isMobile: false,
             customTransition: '',
             loading: false,
+            sizes: [
+                'XXS',
+                'XS',
+                'S',
+                'M',
+                'L',
+                'XL',
+                'XXL'
+            ],
             edit: {
-                name: ''
+                id: '',
+                descrp: '',
+                size: '',
+                price: 0,
+                qty: 0
             }
         }),
         methods: {
@@ -124,11 +174,23 @@
                     this.customTransition = 'dialog-transition'
                 }
             },
-            onUpdateProducts() {
+            onUpdateProducts(id, descrp, size, price, qty) {
+                this.edit.id = id
+                this.edit.descrp = descrp
+                this.edit.size = size
+                this.edit.price = price
+                this.edit.qty = qty
+
                 this.dialog = true
             },
             onClose() {
                 this.dialog = false
+            },
+            onSaveChanges() {
+                this.$v.$touch()
+                if (!this.$v.$invalid && this.loading != true) {
+                    // this.loading = true
+                }
             }
         },
         computed: {
@@ -138,10 +200,31 @@
             getProducts() {
                 return this.$store.getters['products/getProducts']
             },
-            nameErrors () {
+            descrpErrors () {
                 const errors = []
-                if (!this.$v.edit.name.$dirty) return errors
-                !this.$v.edit.name.required && errors.push('Product name is required.')
+                if (!this.$v.edit.descrp.$dirty) return errors
+                !this.$v.edit.descrp.required && errors.push('Description is required.')
+                return errors
+            },
+            priceErrors () {
+                const errors = []
+                if (!this.$v.edit.price.$dirty) return errors
+                !this.$v.edit.price.required && errors.push('Price is required.')
+                !this.$v.edit.price.numeric && errors.push('Price must be a numeric value.')
+                !this.$v.edit.price.minValue && errors.push('Price must be greater than 0.')
+                return errors
+            },
+            qtyErrors () {
+                const errors = []
+                if (!this.$v.edit.qty.$dirty) return errors
+                !this.$v.edit.qty.required && errors.push('Quantity is required.')
+                !this.$v.edit.qty.numeric && errors.push('Quantity must be a numeric value.')
+                return errors
+            },
+            sizeErrors () {
+                const errors = []
+                if (!this.$v.edit.size.$dirty) return errors
+                !this.$v.edit.size.required && errors.push('Size is required.')
                 return errors
             }
         },

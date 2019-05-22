@@ -17,7 +17,7 @@ export default new Router({
   routes: [
     {
       path: '/sign_in',
-      name: 'sign_in',
+      name: 'VENDOFY',
       component: SignIn,
       beforeEnter: (to, from, next) => {
         if (store.getters.getAuthUser) {
@@ -29,31 +29,31 @@ export default new Router({
     },
     {
         path: '/',
-        name: 'dashboard',
+        name: 'Dashboard',
         component: Dashboard,
         beforeEnter: AuthGuard
     },
     {
         path: '/products',
-        name: 'products',
+        name: 'Products',
         component: Products,
         beforeEnter: AuthGuard
     },
     {
         path: '/customers',
-        name: 'customers',
+        name: 'Customers',
         component: Customers,
         beforeEnter: AuthGuard
     },
     {
         path: '/sales',
-        name: 'sales',
+        name: 'Sales',
         component: Sales,
         beforeEnter: AuthGuard
     },
     {
         path: '/settings',
-        name: 'settings',
+        name: 'Settings',
         component: Settings,
         beforeEnter: AuthGuard
     },

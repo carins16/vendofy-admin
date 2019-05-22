@@ -37,7 +37,7 @@
     <!-- Top toolbar -->
     <v-toolbar color="green" dark fixed app>
         <v-toolbar-side-icon v-if="userIsAuthenticated" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-        <v-toolbar-title>VENDOFY</v-toolbar-title>
+        <v-toolbar-title>{{ $route.name }}</v-toolbar-title>
     </v-toolbar>
     <!-- Page content -->
     <v-content>

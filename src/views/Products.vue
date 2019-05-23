@@ -28,11 +28,13 @@
                         </v-layout>
                         <v-btn color="green" block round class="white--text" 
                             @click="onUpdateProducts(
+                                product.key,
                                 product.id,
                                 product.descrp,
                                 product.size,
                                 product.price,
-                                product.qty
+                                product.qty,
+                                product.pic
                             )">
                             <v-icon>edit</v-icon>&nbsp;Update
                         </v-btn>
@@ -159,11 +161,13 @@
                 'XXL'
             ],
             edit: {
+                key: '',
                 id: '',
                 descrp: '',
                 size: '',
                 price: 0,
-                qty: 0
+                qty: 0,
+                pic: ''
             }
         }),
         methods: {
@@ -174,14 +178,17 @@
                     this.customTransition = 'dialog-transition'
                 }
             },
-            onUpdateProducts(id, descrp, size, price, qty) {
+            onUpdateProducts(key, id, descrp, size, price, qty, pic) {
+                this.edit.key = key
                 this.edit.id = id
                 this.edit.descrp = descrp
                 this.edit.size = size
                 this.edit.price = price
                 this.edit.qty = qty
+                this.edit.pic = pic
 
                 this.dialog = true
+                this.loading = false
             },
             onClose() {
                 this.dialog = false
@@ -189,7 +196,8 @@
             onSaveChanges() {
                 this.$v.$touch()
                 if (!this.$v.$invalid && this.loading != true) {
-                    // this.loading = true
+                    this.loading = true
+                    this.$store.dispatch('products/updateProducts', this.edit)
                 }
             }
         },
@@ -226,6 +234,9 @@
                 if (!this.$v.edit.size.$dirty) return errors
                 !this.$v.edit.size.required && errors.push('Size is required.')
                 return errors
+            },
+            getNotify() {
+                return this.$store.getters.getNotify
             }
         },
         watch: {
@@ -237,6 +248,14 @@
             },
             getProducts(val) {
                 if (val !== null && val !== undefined) this.products = val
+            },
+            getNotify(val) {
+                if (val !== null && val !== undefined) {
+                    if (val !== '' && val.includes("Product")) {
+                        this.loading = false
+                        this.onClose()
+                    }
+                }
             }
         },
         created() {

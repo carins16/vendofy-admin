@@ -31,6 +31,21 @@ export default {
 
                 commit('setProducts', products)
             });
+        },
+        updateProducts({dispatch}, payload) {
+            firebase.firestore().collection('products').doc(payload.key).update({
+                descrp: payload.descrp,
+                pic:    payload.pic,
+                price:  payload.price,
+                qty:    payload.qty,
+                size:   payload.size
+            }).then(function() {
+                dispatch('showNotify', "Product no. " + payload.id + " successfully updated." , { root: true })
+            })
+            .catch(function(error) {
+                // The document probably doesn't exist.
+                console.error("Error updating product: ", error);
+            })
         }
     },
     getters: {

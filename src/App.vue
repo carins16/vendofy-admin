@@ -45,6 +45,11 @@
         <v-fade-transition mode="out-in">
           <router-view></router-view>
         </v-fade-transition>
+        <!-- Snackbar -->
+        <v-snackbar v-model="snackbarStatus" bottom left auto-height color="info">
+          <span class="subheading">{{ snackbarMsg }}</span>
+          <v-btn color="white" flat @click="snackbarStatus = false">Close</v-btn>
+        </v-snackbar>
       </v-container>
     </v-content>
   </v-app>
@@ -62,7 +67,9 @@
         {title: "Sales",      icon: "equalizer",        path: "/sales"},
         {divider: true },
         {title: "Settings",   icon: "settings",         path: "/settings"}
-      ]
+      ],
+      snackbarStatus: false,
+      snackbarMsg: ''
     }),
     computed: {
       userIsAuthenticated() {
@@ -70,11 +77,28 @@
       },
       getUser() {
         return this.$store.getters.getAuthUser
-      }
+      },
+      getNotify() {
+        return this.$store.getters.getNotify
+      },
     },
     watch: {
       userIsAuthenticated(val) {
         if (!val) this.$router.replace('/sign_in')
+      },
+      getNotify(val) {
+        if (val !== null && val !== undefined) {
+          if (val !== '') {
+            this.snackbarMsg = val
+            this.snackbarStatus = true
+          } else {
+            this.snackbarMsg = ''
+          }
+        }
+      },
+      snackbarStatus(val) {
+        // clear the msg after snackbar disappear
+        if (val == false) this.$store.dispatch('showNotify', '')
       }
     }
   }

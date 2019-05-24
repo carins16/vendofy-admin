@@ -71,7 +71,21 @@
                     <template>
                         <v-container>
                             <v-layout wrap>
-                                <v-flex xs12>
+                                <v-flex xs12 sm6>
+                                    <template v-if="edit.pic != ''">
+                                        <v-img aspect-ratio="1.0" :src="edit.pic" class="grey lighten-2">
+                                            <template v-slot:placeholder>
+                                                <v-layout fill-height align-center justify-center ma-0 >
+                                                    <v-progress-circular size="100" width="20" indeterminate color="grey"></v-progress-circular>
+                                                </v-layout>
+                                            </template>
+                                        </v-img>
+                                        <v-btn color="deep-orange" block round class="white--text">
+                                            <v-icon>cloud_upload</v-icon>&nbsp;Change
+                                        </v-btn>
+                                    </template>
+                                </v-flex>
+                                <v-flex xs12 sm6>
                                     <v-card-text>
                                         <v-text-field label="Description" 
                                             type="text"
@@ -128,6 +142,12 @@
                 </v-form>
             </v-card>
         </v-dialog>
+
+        <!-- Snackbar -->
+        <v-snackbar v-model="snackbar.status" bottom left auto-height :color="snackbar.color">
+          <span class="subheading">{{ snackbar.msg }}</span>
+          <v-btn color="white" flat @click="snackbar.status = false">Close</v-btn>
+        </v-snackbar>
     </div>
 </template>
 
@@ -152,13 +172,7 @@
             customTransition: '',
             loading: false,
             sizes: [
-                'XXS',
-                'XS',
-                'S',
-                'M',
-                'L',
-                'XL',
-                'XXL'
+                'XXS','XS','S','M','L','XL','XXL'
             ],
             edit: {
                 key: '',
@@ -168,6 +182,11 @@
                 price: 0,
                 qty: 0,
                 pic: ''
+            },
+            snackbar: {
+                status: false,
+                color: '',
+                msg: ''
             }
         }),
         methods: {
@@ -188,9 +207,16 @@
                 this.edit.pic = pic
 
                 this.dialog = true
-                this.loading = false
             },
             onClose() {
+                this.edit.key = ''
+                this.edit.id = ''
+                this.edit.descrp = ''
+                this.edit.size = ''
+                this.edit.price = ''
+                this.edit.qty = ''
+                this.edit.pic = ''
+
                 this.dialog = false
             },
             onSaveChanges() {
@@ -207,6 +233,9 @@
             },
             getProducts() {
                 return this.$store.getters['products/getProducts']
+            },
+            getNotifyUpdates () {
+                return this.$store.getters['products/getNotifyUpdates']
             },
             descrpErrors () {
                 const errors = []
@@ -234,9 +263,6 @@
                 if (!this.$v.edit.size.$dirty) return errors
                 !this.$v.edit.size.required && errors.push('Size is required.')
                 return errors
-            },
-            getNotify() {
-                return this.$store.getters.getNotify
             }
         },
         watch: {
@@ -249,12 +275,14 @@
             getProducts(val) {
                 if (val !== null && val !== undefined) this.products = val
             },
-            getNotify(val) {
+            getNotifyUpdates(val) {
                 if (val !== null && val !== undefined) {
-                    if (val !== '' && val.includes("Product")) {
-                        this.loading = false
-                        this.onClose()
-                    }
+                    this.snackbar.status = true
+                    this.snackbar.color = val.color
+                    this.snackbar.msg = val.msg
+
+                    this.loading = false
+                    this.onClose()
                 }
             }
         },

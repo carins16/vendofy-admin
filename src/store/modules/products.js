@@ -3,11 +3,15 @@ import firebase from 'firebase'
 export default {
     namespaced: true,
     state: {
-        products: null
+        products: null,
+        notifyUpdates: null
     },
     mutations: {
         setProducts (state, payload) {
             state.products = payload
+        },
+        setNotifyUpdates (state, payload) {
+            state.notifyUpdates = payload
         }
     },
     actions: {
@@ -32,7 +36,7 @@ export default {
                 commit('setProducts', products)
             });
         },
-        updateProducts({dispatch}, payload) {
+        updateProducts({commit}, payload) {
             firebase.firestore().collection('products').doc(payload.key).update({
                 descrp: payload.descrp,
                 pic:    payload.pic,
@@ -40,17 +44,26 @@ export default {
                 qty:    payload.qty,
                 size:   payload.size
             }).then(function() {
-                dispatch('showNotify', "Product no. " + payload.id + " successfully updated." , { root: true })
+                commit('setNotifyUpdates', { 
+                    color: 'info', 
+                    msg: 'Product no. ' + payload.id + ' successfully updated.'
+                })
             })
             .catch(function(error) {
-                // The document probably doesn't exist.
                 console.error("Error updating product: ", error);
+                commit('setNotifyUpdates', { 
+                    color: 'error', 
+                    msg: 'Error updating product no. ' + payload.id
+                })
             })
         }
     },
     getters: {
         getProducts: state => {
             return state.products
+        },
+        getNotifyUpdates: state => {
+            return state.notifyUpdates
         }
     }
 }

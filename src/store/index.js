@@ -11,8 +11,7 @@ export default new Vuex.Store({
   },
   state: {
     authUser: JSON.parse(localStorage.getItem('auth')),
-    authError: null,
-    notify: ''
+    authError: null
   },
   mutations: {
     setAuthUser (state, payload) {
@@ -20,9 +19,6 @@ export default new Vuex.Store({
     },
     setAuthError (state, payload) {
       state.authError = payload
-    },
-    setNotify(state, msg) {
-      state.notify = msg
     }
   },
   actions: {
@@ -61,9 +57,6 @@ export default new Vuex.Store({
       }).catch(error => {
         console.log(error)
       })
-    },
-    showNotify ({commit}, msg) {
-      commit('setNotify', msg)
     }
   },
   getters: {
@@ -72,9 +65,6 @@ export default new Vuex.Store({
     },
     getAuthUser: state => {
       return state.authUser
-    },
-    getNotify: state => {
-      return state.notify
     }
   }
 })

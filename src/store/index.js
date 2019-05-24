@@ -2,12 +2,14 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import firebase from 'firebase'
 import products from './modules/products'
+import customers from './modules/customers'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    products
+    products,
+    customers
   },
   state: {
     authUser: JSON.parse(localStorage.getItem('auth')),
@@ -42,8 +44,10 @@ export default new Vuex.Store({
       firebase.auth().onAuthStateChanged(user => {
         if(user) {
           commit('setAuthUser', { uid: user.uid, email: user.email })
-          // fetch products
+          // fetch products data
           dispatch('products/fetchProducts', null, { root: true })
+          // fetch customers data
+          dispatch('customers/fetchCustomers', null, { root: true })
         } else {
           // sign out user
           dispatch('unathenticate')

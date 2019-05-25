@@ -34,8 +34,8 @@ export default {
                 commit('setCustomers', customers)
             });
         },
-        fetchCustomerTransactions(context, custKey) {
-            console.log(custKey)
+        fetchCustomerTransactions({commit}, custKey) {
+
             firebase.firestore().collection('transactions')
             .where('customerKey', '==', custKey)
             .orderBy('dateTrans', 'desc')
@@ -43,16 +43,24 @@ export default {
             .then(querySnapshot => {
 
                 if (querySnapshot.empty) {
-                    console.log("empty")
+                    commit('setCustomerTransactions', null)
                 } else {
                     var customerTransactions = []
 
                     querySnapshot.forEach(doc => {
-                        console.log(doc.data())
                         customerTransactions.push({
-
+                            key:            doc.id,
+                            customerKey:    doc.data().customerKey,
+                            dateTrans:      doc.data().dateTrans.seconds,
+                            prodKey:        doc.data().prodKey,
+                            descrp:         doc.data().descrp,
+                            size:           doc.data().size,
+                            pic:            doc.data().pic,
+                            price:          doc.data().price
                         })
                     })
+
+                    commit('setCustomerTransactions', customerTransactions)
                 }
                 
             })
@@ -61,6 +69,9 @@ export default {
     getters: {
         getCustomers: state => {
             return state.customers
+        },
+        getCustomerTransactions: state => {
+            return state.customerTransactions
         }
     }
 }

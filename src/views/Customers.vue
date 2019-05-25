@@ -1,12 +1,12 @@
 <template>
     <div>
         <v-layout column>
-            <v-flex xs12 ma-2>
-                <v-list two-line>
+            <v-flex xs12>
+                <v-list three-line>
                     <template v-for="(cust, index) in customers">
                         <v-list-tile :key="cust.key" avatar ripple @click="showTransactions(cust.key, cust.name)">
                             <v-list-tile-avatar>
-                                <v-img height="36" :src="require('@/assets/default-user.png')">
+                                <v-img :src="require('@/assets/default-user.png')">
                                     <template v-slot:placeholder>
                                         <v-layout fill-height align-center justify-center ma-0 >
                                             <v-progress-circular size="100" width="20" indeterminate color="grey"></v-progress-circular>
@@ -16,7 +16,7 @@
                             </v-list-tile-avatar>
 
                             <v-list-tile-content>
-                                <v-list-tile-title class="mt-1">
+                                <v-list-tile-title>
                                     <span class="subheading font-weight-medium text-no-wrap text-truncate">
                                         {{ cust.name }}
                                     </span>
@@ -45,7 +45,7 @@
             </v-flex>
         </v-layout>
 
-        <!-- Update dialog -->
+        <!-- Customers transactions dialog -->
         <v-dialog v-model="dialog" persistent :fullscreen="isMobile" :transition="customTransition" max-width="600px">
             <v-card>
                 <!-- Fullscreen dialog -->
@@ -63,6 +63,60 @@
                         <span class="title">{{ selectedCustomer }}</span>
                     </v-card-title>
                     <v-divider></v-divider>
+                </template>
+                <!-- Content -->
+                <template>
+                    <v-layout column>
+                        <v-flex xs12>
+                            <v-list three-line>
+                                <v-subheader>Purchase History</v-subheader>
+                                <template v-for="(trans, index) in customersTransactions">
+                                    <v-list-tile :key="trans.key" avatar ripple>
+                                        <v-list-tile-avatar>
+                                            <v-img :src="trans.pic">
+                                                <template v-slot:placeholder>
+                                                    <v-layout fill-height align-center justify-center ma-0 >
+                                                        <v-progress-circular size="100" width="20" indeterminate color="grey"></v-progress-circular>
+                                                    </v-layout>
+                                                </template>
+                                            </v-img>
+                                        </v-list-tile-avatar>
+
+                                        <v-list-tile-content>
+                                            <v-list-tile-title>
+                                                <v-layout row>
+                                                    <v-flex xs10>
+                                                        <p class="subheading font-weight-regular text-no-wrap text-truncate">
+                                                            ({{ trans.size }}) {{ trans.descrp }}
+                                                        </p>
+                                                    </v-flex>
+                                                </v-layout>
+                                            </v-list-tile-title>
+                                            <v-list-tile-sub-title>
+                                                <span class="subheading font-weight-regular deep-orange--text">
+                                                    ₱ {{ trans.price }}
+                                                </span>
+                                            </v-list-tile-sub-title>
+                                            <v-list-tile-sub-title>
+                                                <span class="grey--text subheading">
+                                                    {{ trans.dateTrans | moment("ddd, MMM Do YYYY, h:mm A") }}
+                                                </span>
+                                            </v-list-tile-sub-title>
+                                        </v-list-tile-content>
+                                        <v-list-tile-action>
+                                            <v-list-tile-action-text>
+                                                <span class="grey--text body-2 font-weight-regular">
+                                                    {{ trans.dateTrans | moment("from", "now", true) }} ago
+                                                </span>
+                                            </v-list-tile-action-text>
+                                            <v-spacer></v-spacer>
+                                        </v-list-tile-action>
+                                    </v-list-tile>
+                                    <v-divider :inset="true" v-if="index + 1 < customersTransactions.length" :key="index"></v-divider>
+                                </template>
+                            </v-list>
+                        </v-flex>
+                    </v-layout>
                 </template>
                 <!-- Small dialog footer -->
                 <template v-if="!isMobile">
@@ -112,6 +166,9 @@
             },
             getCustomers() {
                 return this.$store.getters['customers/getCustomers']
+            },
+            getCustomerTransactions() {
+                return this.$store.getters['customers/getCustomerTransactions']
             }
         },
         watch: {
@@ -124,6 +181,11 @@
             getCustomers(val) {
                 if (val !== null && val !== undefined) {
                     this.customers = val
+                }
+            },
+            getCustomerTransactions(val) {
+                if (val !== null && val !== undefined) {
+                    this.customersTransactions = val
                 }
             }
         },

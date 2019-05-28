@@ -3,13 +3,15 @@ import Vuex from 'vuex'
 import firebase from 'firebase'
 import products from './modules/products'
 import customers from './modules/customers'
+import sales from './modules/Sales'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
     products,
-    customers
+    customers,
+    sales
   },
   state: {
     authUser: JSON.parse(localStorage.getItem('auth')),

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <v-container fluid>
         <v-layout row wrap>
             <v-flex xs12 sm6 md6 lg3 xl3 pa-3 v-for="(product, index) in products" :key="index">
                 <v-card>
@@ -149,7 +149,7 @@
           <span class="subheading">{{ snackbar.msg }}</span>
           <v-btn color="white" flat @click="snackbar.status = false">Close</v-btn>
         </v-snackbar>
-    </div>
+    </v-container>
 </template>
 
 <script>

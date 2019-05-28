@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <v-container fluid>
         <v-layout column>
             <v-flex xs12>
                 <v-list three-line>
@@ -46,7 +46,7 @@
         </v-layout>
 
         <!-- Customers transactions dialog -->
-        <v-dialog v-model="dialog" persistent :fullscreen="isMobile" :transition="customTransition" max-width="600px">
+        <v-dialog v-model="dialog" :fullscreen="isMobile" :transition="customTransition" max-width="600px">
             <v-card>
                 <!-- Fullscreen dialog -->
                 <template v-if="isMobile">
@@ -68,53 +68,62 @@
                 <template>
                     <v-layout column>
                         <v-flex xs12>
-                            <v-list three-line>
-                                <v-subheader>Purchase History</v-subheader>
-                                <template v-for="(trans, index) in customersTransactions">
-                                    <v-list-tile :key="trans.key" avatar ripple>
-                                        <v-list-tile-avatar>
-                                            <v-img :src="trans.pic">
-                                                <template v-slot:placeholder>
-                                                    <v-layout fill-height align-center justify-center ma-0 >
-                                                        <v-progress-circular size="100" width="20" indeterminate color="grey"></v-progress-circular>
-                                                    </v-layout>
-                                                </template>
-                                            </v-img>
-                                        </v-list-tile-avatar>
+                            <template v-if="customersTransactions != null">
+                                <v-list three-line>
+                                    <v-subheader>Purchase History</v-subheader>
+                                    <template v-for="(trans, index) in customersTransactions">
+                                        <v-list-tile :key="trans.key" avatar ripple>
+                                            <v-list-tile-avatar>
+                                                <v-img :src="trans.pic">
+                                                    <template v-slot:placeholder>
+                                                        <v-layout fill-height align-center justify-center ma-0 >
+                                                            <v-progress-circular size="100" width="20" indeterminate color="grey"></v-progress-circular>
+                                                        </v-layout>
+                                                    </template>
+                                                </v-img>
+                                            </v-list-tile-avatar>
 
-                                        <v-list-tile-content>
-                                            <v-list-tile-title>
-                                                <v-layout row>
-                                                    <v-flex xs10>
-                                                        <p class="subheading font-weight-regular text-no-wrap text-truncate">
-                                                            ({{ trans.size }}) {{ trans.descrp }}
-                                                        </p>
-                                                    </v-flex>
-                                                </v-layout>
-                                            </v-list-tile-title>
-                                            <v-list-tile-sub-title>
-                                                <span class="subheading font-weight-regular deep-orange--text">
-                                                    ₱ {{ trans.price }}
-                                                </span>
-                                            </v-list-tile-sub-title>
-                                            <v-list-tile-sub-title>
-                                                <span class="grey--text subheading">
-                                                    {{ trans.dateTrans | moment("ddd, MMM Do YYYY, h:mm A") }}
-                                                </span>
-                                            </v-list-tile-sub-title>
-                                        </v-list-tile-content>
-                                        <v-list-tile-action>
-                                            <v-list-tile-action-text>
-                                                <span class="grey--text body-2 font-weight-regular">
-                                                    {{ trans.dateTrans | moment("from", "now", true) }} ago
-                                                </span>
-                                            </v-list-tile-action-text>
-                                            <v-spacer></v-spacer>
-                                        </v-list-tile-action>
-                                    </v-list-tile>
-                                    <v-divider :inset="true" v-if="index + 1 < customersTransactions.length" :key="index"></v-divider>
-                                </template>
-                            </v-list>
+                                            <v-list-tile-content>
+                                                <v-list-tile-title>
+                                                    <v-layout row>
+                                                        <v-flex xs10>
+                                                            <p class="subheading font-weight-regular text-no-wrap text-truncate">
+                                                                ({{ trans.size }}) {{ trans.descrp }}
+                                                            </p>
+                                                        </v-flex>
+                                                    </v-layout>
+                                                </v-list-tile-title>
+                                                <v-list-tile-sub-title>
+                                                    <span class="subheading font-weight-regular deep-orange--text">
+                                                        ₱ {{ trans.price }}
+                                                    </span>
+                                                </v-list-tile-sub-title>
+                                                <v-list-tile-sub-title>
+                                                    <span class="grey--text subheading">
+                                                        {{ trans.dateTrans | moment("ddd, MMM Do YYYY, h:mm A") }}
+                                                    </span>
+                                                </v-list-tile-sub-title>
+                                            </v-list-tile-content>
+                                            <v-list-tile-action>
+                                                <v-list-tile-action-text>
+                                                    <span class="grey--text body-2 font-weight-regular">
+                                                        {{ trans.dateTrans | moment("from", "now", true) }} ago
+                                                    </span>
+                                                </v-list-tile-action-text>
+                                                <v-spacer></v-spacer>
+                                            </v-list-tile-action>
+                                        </v-list-tile>
+                                        <v-divider :inset="true" v-if="index + 1 < customersTransactions.length" :key="index"></v-divider>
+                                    </template>
+                                </v-list>
+                            </template>
+                            <!-- No purchase history -->
+                            <template v-else>
+                                <div class="text-xs-center py-3">
+                                    <v-icon size="100">info</v-icon>
+                                    <div class="subheading">The customer has no purchase history yet.</div>
+                                </div>
+                            </template>
                         </v-flex>
                     </v-layout>
                 </template>
@@ -128,7 +137,7 @@
                 </template>
             </v-card>
         </v-dialog>
-    </div>
+    </v-container>
 </template>
 
 <script>
@@ -139,7 +148,8 @@
             isMobile: false,
             customTransition: '',
             selectedCustomer: '',
-            customersTransactions: null
+            customersTransactions: null,
+            isLoading: false
         }),
         methods: {
             setDialogTransition () {
@@ -186,6 +196,14 @@
             getCustomerTransactions(val) {
                 if (val !== null && val !== undefined) {
                     this.customersTransactions = val
+                }
+            },
+            dialog(val) {
+                if (val !== null && val !== undefined) {
+                    if (val == false) {
+                        this.customersTransactions = null
+                        this.$store.dispatch('customers/onCloseCustomerTransactions')
+                    }
                 }
             }
         },

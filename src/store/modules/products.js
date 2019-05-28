@@ -34,7 +34,7 @@ export default {
                 });
 
                 commit('setProducts', products)
-            });
+            })
         },
         updateProducts({commit}, payload) {
             firebase.firestore().collection('products').doc(payload.key).update({

@@ -35,24 +35,62 @@
       </v-list>
     </v-navigation-drawer>
     <!-- Top toolbar -->
-    <v-toolbar color="green" dark fixed app>
+    <v-toolbar color="green" :tabs="$route.path == '/sales'" dark fixed app>
         <v-toolbar-side-icon v-if="userIsAuthenticated" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
         <v-toolbar-title>{{ $route.name }}</v-toolbar-title>
+        <!-- Toolbar tabs header -->
+        <template v-slot:extension v-if="$route.path == '/sales'">
+          <v-tabs v-model="tab" fixed-tabs grow color="transparent">
+            <!-- Active tab slider indicator -->
+            <v-tabs-slider color="yellow"></v-tabs-slider>
+            <!-- List of tab items -->
+            <v-tab v-for="item in tabItems" :key="item.id">
+              &nbsp;<span>{{ item.name }}</span>
+            </v-tab>
+          </v-tabs>
+        </template>
     </v-toolbar>
     <!-- Page content -->
     <v-content>
-      <v-container fluid>
+      <template v-if="$route.path == '/sales'">
+        <!-- tabs content -->
+        <v-tabs-items v-model="tab">
+          <v-tab-item key="0">
+            <v-card flat class="tab-item-wrapper">
+              <daily-sales/>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item key="1">
+            <v-card flat class="tab-item-wrapper">
+              <monthly-sales/>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item key="3">
+            <v-card flat class="tab-item-wrapper">
+              <anually-sales/>
+            </v-card>
+          </v-tab-item>
+        </v-tabs-items>
+      </template>
+      <template v-else>
         <v-fade-transition mode="out-in">
           <router-view></router-view>
         </v-fade-transition>
-      </v-container>
+      </template>
     </v-content>
   </v-app>
 </template>
 
 <script>
+  import DailySales from '@/components/DailySales'
+  import MonthlySales from '@/components/MonthlySales'
+  import AnuallySales from '@/components/AnuallySales'
+
   export default {
     name: 'App',
+    components: {
+      DailySales, MonthlySales, AnuallySales
+    },
     data: () => ({
       drawer: null,
       pages: [
@@ -62,6 +100,12 @@
         {title: "Sales",      icon: "equalizer",        path: "/sales"},
         {divider: true },
         {title: "Settings",   icon: "settings",         path: "/settings"}
+      ],
+      tab: null,
+      tabItems: [
+        { id: 1, name: 'Daily',     icon: 'business_center'},
+        { id: 2, name: 'Monthly',   icon: 'history'},
+        { id: 3, name: 'Annually',    icon: 'history'}
       ]
     }),
     computed: {
@@ -82,7 +126,10 @@
 
 <style scoped>
     .lightbox {
-        box-shadow: 0 0 20px inset rgba(0, 0, 0, 0.2);
-        background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
+      box-shadow: 0 0 20px inset rgba(0, 0, 0, 0.2);
+      background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
+    }
+    .v-tabs__slider {
+      height: 4px;
     }
 </style>

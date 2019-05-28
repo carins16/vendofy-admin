@@ -36,11 +36,11 @@ export default {
         },
         fetchCustomerTransactions({commit}, custKey) {
 
-            firebase.firestore().collection('transactions')
+            this.unsubscribeCustomerTransactions = firebase.firestore()
+            .collection('transactions')
             .where('customerKey', '==', custKey)
             .orderBy('dateTrans', 'desc')
-            .get()
-            .then(querySnapshot => {
+            .onSnapshot( querySnapshot => {
 
                 if (querySnapshot.empty) {
                     commit('setCustomerTransactions', null)
@@ -64,6 +64,11 @@ export default {
                 }
                 
             })
+        },
+        onCloseCustomerTransactions({commit}) {
+            commit('setCustomerTransactions', null)
+            // detach customer transaction listener
+            this.unsubscribeCustomerTransactions()
         }
     },
     getters: {

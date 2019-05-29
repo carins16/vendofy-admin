@@ -6,14 +6,14 @@
                 <v-dialog ref="dialog" v-model="modal" :return-value.sync="date" persistent lazy full-width width="290px">
                     <template v-slot:activator="{ on }">
                         <v-text-field
-                        v-model="date"
+                        :value="computedDateFormattedMomentjs"
                         label="Select a Date"
                         prepend-icon="event"
                         readonly
                         v-on="on"
                         ></v-text-field>
                     </template>
-                    <v-date-picker v-model="date" scrollable :reactive="false">
+                    <v-date-picker v-model="date" scrollable color="green">
                         <v-spacer></v-spacer>
                         <v-btn flat color="primary" @click="modal = false">Cancel</v-btn>
                         <v-btn flat color="primary" @click="onDateSelected">OK</v-btn>
@@ -98,7 +98,7 @@
                 <template v-else>
                     <div class="text-xs-center py-3 mb-5">
                         <v-icon size="100">info</v-icon>
-                        <div class="subheading">No Sales on this date.</div>
+                        <div class="subheading">No sales on this date.</div>
                     </div>
                 </template>
             </v-flex>
@@ -108,6 +108,8 @@
 </template>
 
 <script>
+    import moment from 'moment'
+
     export default {
         data: () => ({
             date: new Date().toISOString().substr(0, 10),
@@ -126,6 +128,9 @@
             },
             getTotalDailySales() {
                 return this.$store.getters['sales/getTotalDailySales']
+            },
+            computedDateFormattedMomentjs () {
+                return this.date ? moment(this.date).format('dddd, MMMM Do YYYY') : ''
             }
         },
         watch: {

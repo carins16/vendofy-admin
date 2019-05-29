@@ -16,7 +16,7 @@
                                 {{ product.id }}
                             </span>
                         </v-btn>
-                        <p class="title font-weight-medium deep-orange--text mb-2">₱ {{ product.price }}</p>
+                        <p class="title font-weight-medium deep-orange--text mb-2">₱ {{ Number(product.price).toLocaleString() }}</p>
                         <p class="title font-weight-bold blue--text mb-2 text-no-wrap text-truncate">{{ product.descrp }}</p>
                         <v-layout row>
                             <v-flex xs6>

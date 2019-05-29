@@ -24,7 +24,7 @@
                 </v-list-tile-content>
             </v-list-tile>
         </template>
-        <v-list-tile>
+        <v-list-tile @click="signOutDialog = true, drawer = false">
             <v-list-tile-action>
                 <v-icon>input</v-icon>
             </v-list-tile-action>
@@ -78,6 +78,24 @@
         </v-fade-transition>
       </template>
     </v-content>
+
+    <!-- Signing out dialog -->
+    <v-dialog v-model="signOutDialog" max-width="360">
+      <v-card>
+        <v-card-title class="headline">Signing Out</v-card-title>
+        <v-card-text>
+          <span class="subheading font-weight-regular">
+            Are you sure do you want to sign out ?
+          </span>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" large flat="flat" @click="signOut">Yes</v-btn>
+          <v-btn color="green darken-1" large flat="flat" @click="signOutDialog = false">No</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-app>
 </template>
 
@@ -106,8 +124,15 @@
         { id: 1, name: 'Daily',     icon: 'business_center'},
         { id: 2, name: 'Monthly',   icon: 'history'},
         { id: 3, name: 'Annually',    icon: 'history'}
-      ]
+      ],
+      signOutDialog: false
     }),
+    methods: {
+      signOut() {
+        this.signOutDialog = false
+        this.$store.dispatch('unathenticate')
+      }
+    },
     computed: {
       userIsAuthenticated() {
         return this.$store.getters.getAuthUser !== null && this.$store.getters.getAuthUser !== undefined

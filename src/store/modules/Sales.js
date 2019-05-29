@@ -138,15 +138,11 @@ export default {
                 this.unsubscribeYearlySales()
             }
 
-            console.log(year)
             // initialize selected year
             var firstMonth = new Date(year)
             var lastMonth = new Date(year, 12, 0)
             firstMonth.setHours(0,0,0,0)
             lastMonth.setHours(23,59,59,59)
-
-            console.log(firstMonth)
-            console.log(lastMonth)
 
             // attach new listener for specific year
             this.unsubscribeYearlySales = firebase.firestore().collection('transactions')

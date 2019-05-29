@@ -60,6 +60,7 @@ export default new Vuex.Store({
       firebase.auth().signOut().then(() => {
         commit('setAuthUser', null)
         localStorage.removeItem('auth')
+        console.log("successful signout")
       }).catch(error => {
         console.log(error)
       })

@@ -3,22 +3,9 @@
     <template>
         <v-layout row wrap class="pt-4 pl-4 pr-4">
             <v-flex xs12 sm6 md4>
-                <v-dialog ref="dialog" v-model="modal" :return-value.sync="year" persistent lazy full-width width="290px">
-                    <template v-slot:activator="{ on }">
-                        <v-text-field
-                        :value="computedDateFormattedMomentjs"
-                        label="Select a Year"
-                        prepend-icon="event"
-                        readonly
-                        v-on="on"
-                        ></v-text-field>
-                    </template>
-                    <v-date-picker v-model="year" type="year" scrollable color="green">
-                        <v-spacer></v-spacer>
-                        <v-btn flat color="primary" @click="modal = false">Cancel</v-btn>
-                        <v-btn flat color="primary" @click="onYearSelected">OK</v-btn>
-                    </v-date-picker>
-                </v-dialog>
+                <v-select label="Select a Year" v-model="year" :items="years" prepend-icon="event"
+                        @change="onYearSelected">
+                </v-select>
             </v-flex>
         </v-layout>
     </template>
@@ -52,7 +39,7 @@
                                     </v-list-tile-title>
                                     <v-list-tile-sub-title>
                                         <span class="subheading font-weight-regular deep-orange--text">
-                                            ₱ {{ sales.price }}
+                                            ₱ {{ Number(sales.price).toLocaleString() }}
                                         </span>
                                         <span class="grey--text subheading">
                                             (x{{ sales.qty }})
@@ -65,7 +52,7 @@
                                 <v-list-tile-action>
                                     <v-list-tile-action-text>
                                         <span class="pink--text subheading font-weight-regular">
-                                            ₱ {{ sales.total }}
+                                            ₱ {{ Number(sales.total).toLocaleString() }}
                                         </span>
                                     </v-list-tile-action-text>
                                     <v-spacer></v-spacer>
@@ -107,16 +94,20 @@
 </template>
 
 <script>
-    import moment from 'moment'
     export default {
         data: () => ({
-            year: new Date().toISOString().substr(0, 4),
+            year: 2019,
             modal: false,
-            yearlySales: null
+            yearlySales: null,
+            years: [
+                2014,2015,2016,2017,2018,2019,
+                2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,
+                2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,
+                2040,2041,2042,2043,2044,2045,2046,2047,2048,2049,2050
+            ]
         }),
         methods: {
             onYearSelected() {
-                this.$refs.dialog.save(this.year)
                 this.$store.dispatch('sales/fetchYearlySales', this.year)
             }
         },
@@ -126,9 +117,6 @@
             },
             getTotalYearlySales() {
                 return this.$store.getters['sales/getTotalYearlySales']
-            },
-            computedDateFormattedMomentjs () {
-                return this.year ? moment(this.year).format('YYYY') : ''
             }
         },
         watch: {

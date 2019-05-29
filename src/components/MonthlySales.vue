@@ -53,7 +53,7 @@
                                     </v-list-tile-title>
                                     <v-list-tile-sub-title>
                                         <span class="subheading font-weight-regular deep-orange--text">
-                                            ₱ {{ sales.price }}
+                                            ₱ {{ Number(sales.price).toLocaleString() }}
                                         </span>
                                         <span class="grey--text subheading">
                                             (x{{ sales.qty }})
@@ -66,7 +66,7 @@
                                 <v-list-tile-action>
                                     <v-list-tile-action-text>
                                         <span class="pink--text subheading font-weight-regular">
-                                            ₱ {{ sales.total }}
+                                            ₱ {{ Number(sales.total).toLocaleString() }}
                                         </span>
                                     </v-list-tile-action-text>
                                     <v-spacer></v-spacer>

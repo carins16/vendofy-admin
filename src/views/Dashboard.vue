@@ -1,3 +1,5 @@
 <template>
-    <h1>Dashboard</h1>
+    <v-container fluid>
+        <h1>Coming soon...</h1>
+    </v-container>
 </template>

@@ -1,5 +1,20 @@
 <template>
     <v-container fluid>
-        <h1>Coming soon...</h1>
+        <v-switch
+        v-model="switch1"
+        label="Lock"
+        prepend-icon="event"
+        hint="hello"
+        color="blue"
+        ></v-switch>
     </v-container>
 </template>
+
+<script>
+    export default {
+        data: () => ({
+            switch1: true
+        })
+    }
+</script>
+

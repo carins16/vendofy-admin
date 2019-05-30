@@ -116,8 +116,6 @@
         {title: "Products",   icon: "business_center",  path: "/products"},
         {title: "Customers",  icon: "group",            path: "/customers"},
         {title: "Sales",      icon: "equalizer",        path: "/sales"},
-        {divider: true },
-        {title: "Settings",   icon: "settings",         path: "/settings"}
       ],
       tab: null,
       tabItems: [

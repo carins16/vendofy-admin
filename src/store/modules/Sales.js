@@ -8,7 +8,8 @@ export default {
         monthlySales: null,
         totalMonthlySales: 0,
         yearlySales: null,
-        totalYearlySales: 0
+        totalYearlySales: 0,
+        totalOverallSales: 0
     },
     mutations: {
         setDailySales (state, payload) {
@@ -28,6 +29,9 @@ export default {
         },
         setTotalYearlySales (state, payload) {
             state.totalYearlySales = payload
+        },
+        setTotalOverallSales (state, payload) {
+            state.totalOverallSales = payload
         }
     },
     actions: {
@@ -180,6 +184,18 @@ export default {
                 commit("setYearlySales", yearlySales)
                 commit("setTotalYearlySales", totalYearlySales)
             })
+        },
+        fetchOverallSales({commit}) {
+            this.unsubscribeOverallSales = firebase.firestore().collection('transactions')
+            .onSnapshot( querySnapshot => {
+                var totalOverallSales = 0
+
+                querySnapshot.forEach( doc => {
+                    totalOverallSales += doc.data().price
+                })
+
+                commit("setTotalOverallSales", totalOverallSales)
+            })
         }
     },
     getters: {
@@ -200,6 +216,9 @@ export default {
         },
         getTotalYearlySales: state => {
             return state.totalYearlySales
+        },
+        getTotalOverallSales: state => {
+            return state.totalOverallSales
         }
     }
 }

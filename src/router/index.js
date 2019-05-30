@@ -6,7 +6,6 @@ import SignIn from '@/views/Sign_in'
 import Dashboard from '@/views/Dashboard'
 import Products from '@/views/Products'
 import Customers from '@/views/Customers'
-import Settings from '@/views/Settings'
 
 Vue.use(Router)
 
@@ -48,12 +47,6 @@ export default new Router({
         path: '/sales',
         name: 'Sales',
         beforeEnter: AuthGuard
-    },
-    {
-        path: '/settings',
-        name: 'Settings',
-        component: Settings,
-        beforeEnter: AuthGuard
-    },
+    }
   ]
 })

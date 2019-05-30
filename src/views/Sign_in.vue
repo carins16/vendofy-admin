@@ -29,7 +29,7 @@
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn type="submit" color="primary" large :loading="loading">Sign In</v-btn>
+                            <v-btn type="submit" color="green" dark large :loading="loading">Sign In</v-btn>
                         </v-card-actions>
                     </v-form>
                 </v-flex>

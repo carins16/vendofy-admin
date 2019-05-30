@@ -16,7 +16,7 @@ export default {
     },
     actions: {
         fetchProducts({commit}) {
-            firebase.firestore().collection('products').orderBy('id', 'asc')
+            this.unsubscribeProducts = firebase.firestore().collection('products').orderBy('id', 'asc')
             .onSnapshot( querySnapshot => {
 
                 var products = [];

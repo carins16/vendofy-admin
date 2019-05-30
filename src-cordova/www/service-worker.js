@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "precache-manifest.9c61cd9ef81c848ba6acd188eda5ee8b.js"
+  "precache-manifest.d6aef1e784f231437159fb44392806cd.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "vendofy-admin"});

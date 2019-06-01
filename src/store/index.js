@@ -67,7 +67,17 @@ export default new Vuex.Store({
       firebase.auth().signOut().then(() => {
         commit('setAuthUser', null)
         localStorage.removeItem('auth')
-        console.log("successful signout")
+
+        // unsubscribe listeners
+        if (typeof this.unsubscribeProducts !== "undefined") this.unsubscribeProducts()
+        if (typeof this.unsubscribeCustomers !== "undefined") this.unsubscribeCustomers()
+        if (typeof this.unsubscribeCustomerTransactions !== "undefined") this.unsubscribeCustomerTransactions()
+        if (typeof this.unsubscribeDailySales !== "undefined") this.unsubscribeDailySales()
+        if (typeof this.unsubscribeMonthlySales !== "undefined") this.unsubscribeMonthlySales()
+        if (typeof this.unsubscribeYearlySales !== "undefined") this.unsubscribeYearlySales()
+        if (typeof this.unsubscribeOverallSales !== "undefined") this.unsubscribeOverallSales()
+        if (typeof this.unsubscribeAlarmLock !== "undefined") this.unsubscribeAlarmLock()
+        
       }).catch(error => {
         console.log(error)
       })

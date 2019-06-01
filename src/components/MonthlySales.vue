@@ -2,7 +2,7 @@
 <div>
     <template>
         <v-layout row wrap class="pt-4 pl-4 pr-4">
-            <v-flex xs12 sm6 md4>
+            <v-flex xs6>
                 <v-dialog ref="dialog" v-model="modal" :return-value.sync="month" persistent lazy full-width width="290px">
                     <template v-slot:activator="{ on }">
                         <v-text-field
@@ -20,89 +20,100 @@
                     </v-date-picker>
                 </v-dialog>
             </v-flex>
+            <v-flex xs6>
+                <v-btn color="blue" style="float:right" dark @click="printDialog" >
+                    <v-icon>print</v-icon>&nbsp;Print
+                </v-btn>
+            </v-flex>
         </v-layout>
     </template>
     
     <!-- summary of sales -->
     <template>
-        <v-layout column class="pr-4 pb-5">
-            <v-flex xs12>
-                <template v-if="monthlySales != null && monthlySales.length > 0">
-                    <v-list two-line>
-                        <template v-for="(sales, index) in monthlySales">
-                            <v-list-tile :key="sales.descrp + sales.size + sales.price" avatar ripple>
-                                <v-list-tile-avatar>
-                                    <v-img :src="sales.pic">
-                                        <template v-slot:placeholder>
-                                            <v-layout fill-height align-center justify-center ma-0 >
-                                                <v-progress-circular size="100" width="20" indeterminate color="grey"></v-progress-circular>
-                                            </v-layout>
-                                        </template>
-                                    </v-img>
-                                </v-list-tile-avatar>
+        <div id="printMonthly">
+            <center v-show="isPrint">
+                <h1>Monthly Sales Report</h1>
+                <h1>({{month | moment('MMMM, YYYY')}})</h1>
+            </center>
+            <v-layout column class="pr-4 pb-5">
+                <v-flex xs12>
+                    <template v-if="monthlySales != null && monthlySales.length > 0">
+                        <v-list two-line>
+                            <template v-for="(sales, index) in monthlySales">
+                                <v-list-tile :key="sales.descrp + sales.size + sales.price" avatar ripple>
+                                    <v-list-tile-avatar>
+                                        <v-img :src="sales.pic">
+                                            <template v-slot:placeholder>
+                                                <v-layout fill-height align-center justify-center ma-0 >
+                                                    <v-progress-circular size="100" width="20" indeterminate color="grey"></v-progress-circular>
+                                                </v-layout>
+                                            </template>
+                                        </v-img>
+                                    </v-list-tile-avatar>
 
+                                    <v-list-tile-content>
+                                        <v-list-tile-title>
+                                            <v-layout row>
+                                                <v-flex xs10>
+                                                    <p class="subheading font-weight-regular text-no-wrap text-truncate">
+                                                        ({{ sales.size }}) {{ sales.descrp }}
+                                                    </p>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-list-tile-title>
+                                        <v-list-tile-sub-title>
+                                            <span class="subheading font-weight-regular deep-orange--text">
+                                                ₱ {{ Number(sales.price).toLocaleString() }}
+                                            </span>
+                                            <span class="grey--text subheading">
+                                                (x{{ sales.qty }})
+                                            </span>
+                                        </v-list-tile-sub-title>
+                                        <v-list-tile-sub-title>
+                                            
+                                        </v-list-tile-sub-title>
+                                    </v-list-tile-content>
+                                    <v-list-tile-action>
+                                        <v-list-tile-action-text>
+                                            <span class="pink--text subheading font-weight-regular">
+                                                ₱ {{ Number(sales.total).toLocaleString() }}
+                                            </span>
+                                        </v-list-tile-action-text>
+                                        <v-spacer></v-spacer>
+                                    </v-list-tile-action>
+                                </v-list-tile>
+                                <v-divider :inset="true" v-if="index + 1 < monthlySales.length" :key="index"></v-divider>
+                            </template>
+                        </v-list>
+                        <template>
+                            <v-divider inset></v-divider>
+                            <v-list-tile avatar>
+                                <v-list-tile-avatar></v-list-tile-avatar>
                                 <v-list-tile-content>
                                     <v-list-tile-title>
-                                        <v-layout row>
-                                            <v-flex xs10>
-                                                <p class="subheading font-weight-regular text-no-wrap text-truncate">
-                                                    ({{ sales.size }}) {{ sales.descrp }}
-                                                </p>
-                                            </v-flex>
-                                        </v-layout>
+                                        <p class="title font-weight-meduim red--text">
+                                            Total Monthly Sales:
+                                        </p>
                                     </v-list-tile-title>
-                                    <v-list-tile-sub-title>
-                                        <span class="subheading font-weight-regular deep-orange--text">
-                                            ₱ {{ Number(sales.price).toLocaleString() }}
-                                        </span>
-                                        <span class="grey--text subheading">
-                                            (x{{ sales.qty }})
-                                        </span>
-                                    </v-list-tile-sub-title>
-                                    <v-list-tile-sub-title>
-                                        
-                                    </v-list-tile-sub-title>
                                 </v-list-tile-content>
                                 <v-list-tile-action>
-                                    <v-list-tile-action-text>
-                                        <span class="pink--text subheading font-weight-regular">
-                                            ₱ {{ Number(sales.total).toLocaleString() }}
-                                        </span>
-                                    </v-list-tile-action-text>
-                                    <v-spacer></v-spacer>
+                                    <p class="title font-weight-meduim red--text mt-3">
+                                        ₱ {{ Number(getTotalMonthlySales).toLocaleString() }}
+                                    </p>
                                 </v-list-tile-action>
                             </v-list-tile>
-                            <v-divider :inset="true" v-if="index + 1 < monthlySales.length" :key="index"></v-divider>
                         </template>
-                    </v-list>
-                    <template>
-                        <v-divider inset></v-divider>
-                        <v-list-tile avatar>
-                            <v-list-tile-avatar></v-list-tile-avatar>
-                            <v-list-tile-content>
-                                <v-list-tile-title>
-                                    <p class="title font-weight-meduim red--text">
-                                        Total Monthly Sales:
-                                    </p>
-                                </v-list-tile-title>
-                            </v-list-tile-content>
-                            <v-list-tile-action>
-                                <p class="title font-weight-meduim red--text mt-3">
-                                    ₱ {{ Number(getTotalMonthlySales).toLocaleString() }}
-                                </p>
-                            </v-list-tile-action>
-                        </v-list-tile>
                     </template>
-                </template>
-                <!-- No purchase history -->
-                <template v-else>
-                    <div class="text-xs-center py-3 mb-5">
-                        <v-icon size="100">info</v-icon>
-                        <div class="subheading">No sales on this month.</div>
-                    </div>
-                </template>
-            </v-flex>
-        </v-layout>
+                    <!-- No purchase history -->
+                    <template v-else>
+                        <div class="text-xs-center py-3 mb-5">
+                            <v-icon size="100">info</v-icon>
+                            <div class="subheading">No sales on this month.</div>
+                        </div>
+                    </template>
+                </v-flex>
+            </v-layout>
+        </div>
     </template>
 </div>
 </template>
@@ -113,12 +124,20 @@
         data: () => ({
             month: new Date().toISOString().substr(0, 7),
             modal: false,
-            monthlySales: null
+            monthlySales: null,
+            isPrint: false
         }),
         methods: {
             onMonthSelected() {
                 this.$refs.dialog.save(this.month)
                 this.$store.dispatch('sales/fetchMonthlySales', this.month)
+            },
+            printDialog() {
+                this.isPrint = true
+                setTimeout(() => {
+                    this.$htmlToPaper('printMonthly');
+                    this.isPrint = false
+                }, 500);
             }
         },
         computed: {

@@ -5,10 +5,25 @@ import router from './router/index'
 import store from './store/index'
 import './registerServiceWorker'
 import firebase from 'firebase'
+import VueHtmlToPaper from 'vue-html-to-paper'
 
 Vue.config.productionTip = false
 
 Vue.use(require('vue-moment'))
+
+const options = {
+  name: '_blank',
+  specs: [
+    'fullscreen=yes',
+    'titlebar=yes',
+    'scrollbars=yes'
+  ],
+  styles: [
+    'googleapis/vuetify.min.css'
+  ]
+}
+
+Vue.use(VueHtmlToPaper, options);
 
 new Vue({
   router,

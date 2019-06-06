@@ -80,10 +80,10 @@
                                                 </v-layout>
                                             </template>
                                         </v-img>
-                                        <v-btn color="deep-orange" block round class="white--text">
+                                        <!-- <v-btn color="deep-orange" block round class="white--text">
                                             <v-icon>cloud_upload</v-icon>&nbsp;Change Picture
                                         </v-btn>
-                                        <input type="file" style="display: none" accept="image/*">
+                                        <input type="file" style="display: none" accept="image/*"> -->
                                     </template>
                                 </v-flex>
                                 <v-flex xs12 sm6>
